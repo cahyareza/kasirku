@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.views.decorators.http import require_POST
 from .cart import Cart
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 @login_required(login_url=settings.LOGIN_URL)
@@ -23,14 +24,36 @@ def barang(request):
     tittle = "Daftar Barang";
     cart_product_form = CartAddProductForm()
     cart = Cart(request)
-    
+    search = request.GET.get("search") if request.GET.get("search") else ""
+
+    if search:
+        barangs = barangs.filter(
+            barang__icontains=search
+        )
+
+    # Pagination
+    page_size = 1  # Set the number of items per page
+    paginator = Paginator(barangs, page_size)
+    page = request.GET.get('page')
+
+    try:
+        barangs = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        barangs = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        barangs = paginator.page(paginator.num_pages)
+
+    # Pass the search parameter in the context for pagination links
     konteks = {
-        'barangs' : barangs,
-        'tittle' : tittle,
+        'barangs': barangs,
+        'tittle': tittle,
         'cart_product_form': cart_product_form,
         'cart': cart,
+        'search': search,  # Include search query in the context
     }
-    return render(request, 'barang.html', konteks, )
+    return render(request, 'barang.html', konteks)
 
 @login_required(login_url=settings.LOGIN_URL)
 def dashboard(request):

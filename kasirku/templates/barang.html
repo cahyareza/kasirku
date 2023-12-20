@@ -1,9 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
     <center>
       <h1>Input Order</h1>
     </center>
@@ -11,7 +8,11 @@
       <div class="main-content">
         <div class="container mt-5">
             <div class="row">
-                <div class="col-6" style="margin-right: 5px;">
+                <div class="col" style="margin-right: 5px;">
+                  <form class="d-flex mb-2">
+                    <input class="form-control mr-2" type="search" placeholder="Search" aria-label="Search" name="search">
+                    <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
+                  </form>
                   <div class="card shadow">
                     <div class="card-header border-0">
                       <h3 class="mb-0">Daftar Barang</h3>
@@ -20,16 +21,16 @@
                       <table class="table align-items-center table-flush">
                         <thead class="thead-light">
                           <tr>
-                            <th scope="col">Nama Barang</th>
-                            <th scope="col">KODE Barang</th>
-                            <th scope="col">HARGA</th>
-                            <th scope="col"></th>
+                            <th>Nama Barang</th>
+                            <th>KODE Barang</th>
+                            <th>HARGA</th>
+                            <th></th>
                           </tr>
                         </thead>
                         {% for barang in barangs %}
                         <tbody>
                           <tr>
-                            <th scope="row">
+                            <th>
                               <div class="media align-items-center">
                                 <div class="media-body">
                                   <span class="mb-0 text-sm">{{ barang.barang }}</span><br> Stok: {{ barang.quantity }}
@@ -57,10 +58,30 @@
                         </tbody>
                       </table>
                     </div>
+
+                    <div class="pagination d-flex justify-content-center">
+                        <span class="step-links">
+                            {% if barangs.has_previous %}
+                                <a href="?search={{ search }}&page=1">&laquo; first</a>
+                                <a href="?search={{ search }}&page={{ barangs.previous_page_number }}">previous</a>
+                            {% endif %}
+
+                            <span class="current">
+                                Page {{ barangs.number }} of {{ barangs.paginator.num_pages }}.
+                            </span>
+
+                            {% if barangs.has_next %}
+                                <a href="?search={{ search }}&page={{ barangs.next_page_number }}">next</a>
+                                <a href="?search={{ search }}&page={{ barangs.paginator.num_pages }}">last &raquo;</a>
+                            {% endif %}
+                        </span>
+                    </div>
+
+
                   </div>
                 </div>
 
-                <div class="col-6">
+                <div class="col">
                   <div class="card shadow">
                     <div class="card-header border-0">
                       <h3 class="mb-0">Input Order</h3>
