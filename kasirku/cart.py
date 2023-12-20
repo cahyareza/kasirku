@@ -63,16 +63,24 @@ class Cart():
             cart[str(product.id)]['product'] = product
 
         for item in cart.values():
+            print(item)
             item['price'] = Decimal(item['price'])
             item['total_price'] = item['price']*item['quantity']
-
+            item['total_diskon'] = item['product'].diskon * (item['price'] / 100)
             yield item
 
     def __len__(self):
         return sum(item['quantity'] for item in self.cart.values())
 
+
+    def get_subtotal_price(self):
+        return sum(item['price']* item['quantity'] for item in self.cart.values())
+
     def get_total_price(self):
-        return sum(Decimal(item['price']* item['quantity']) for item in self.cart.values())
+        return int(sum(Decimal(item['price']* item['quantity']) - int(Decimal(item['price']* item['quantity'] * Decimal((item["product"].diskon/100)))) for item in self.cart.values()))
+
+    def get_total_diskon(self):
+        return int(sum(item['price']* item['quantity'] * Decimal((item["product"].diskon/100)) for item in self.cart.values()))
 
     def get_total_quantity(self):
         return sum(item['quantity'] for item in self.cart.values())

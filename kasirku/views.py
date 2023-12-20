@@ -72,8 +72,6 @@ def add_cart(request, product_id):
         cd=form.cleaned_data
         cart.add(product=product, quantity=cd['quantity'], override_quantity=cd['override'])
 
-    print(cart)
-
     return redirect('barang')
 
 
